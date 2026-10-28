@@ -1,1 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Whispers & Chuckles | Story Haven</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-primary: #fcfbf7;
+      --bg-surface: #ffffff;
+      --bg-card: rgba(255, 255, 255, 0.85);
+      --text-main: #2b2b2b;
+      --text-muted: #6b6a65;
+      --accent: #d97736;
+      --accent-glow: rgba(217, 119, 54, 0.15);
+      --border: #edeae2;
+      --tag-funny: #fef3c7;
+      --tag-funny-text: #92400e;
+      --tag-deep: #e0f2fe;
+      --tag-deep-text: #075985;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
+      --radius: 20px;
+      --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
 
+    [data-theme="dark"] {
+      --bg-primary: #121316;
+      --bg-surface: #1a1c22;
+      --bg-card: rgba(26, 28, 34, 0.85);
+      --text-main: #f1ede6;
+      --text-muted: #9e9d97;
+      --accent: #e58d52;
+      --accent-glow: rgba(229, 141, 82, 0.2);
+      --border: #2c2f38;
+      --tag-funny: #452203;
+      --tag-funny-text: #fde68a;
+      --tag-deep: #082f49;
+      --tag-deep-text: #bae6fd;
+      --shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.7;
+      transition: background-color 0.4s ease, color 0.4s ease;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Reading Progress Bar */
+    #progress-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: transparent;
+      z-index: 999;
+    }
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width 0.1s ease-out;
+    }
+
+    /* Header & Navigation */
+    header {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      color: var(--text-main);
+      text-decoration: none;
+    }
+
+    .logo span {
+      color: var(--accent);
+    }
+
+    .theme-toggle {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: var(--transition);
+      color: var(--text-main);
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      max-width: 700px;
+      margin: 3rem auto 2.5rem;
+      padding: 0 1.5rem;
+    }
+
+    .hero h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(2.4rem, 6vw, 3.8rem);
+      line-height: 1.15;
+      font-weight: 400;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+
+    /* Filter Tabs */
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 3.5rem;
+      padding: 0 1rem;
+    }
+
+    .tab-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.6rem 1.4rem;
+      border-radius: 999px;
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+      border-color: var(--accent);
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+      box-shadow: 0 4px 15px var(--accent-glow);
+    }
+
+    /* Story Section */
+    .story-container {
+      max-width: 780px;
+      margin: 0 auto 6rem;
+      padding: 0 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3.5rem;
+    }
+
+    .story-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: clamp(2rem, 5vw, 3.5rem);
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .story-card.hidden {
+      display: none;
+    }
+
+    .story-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.85rem;
+    }
+
+    .tag {
+      padding: 0.25rem 0.85rem;
+      border-radius: 999px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+    }
+
+    .tag.funny {
+      background: var(--tag-funny);
+      color: var(--tag-funny-text);
+    }
+
+    .tag.beautiful {
+      background: var(--tag-deep);
+      color: var(--tag-deep-text);
+    }
+
+    .reading-time {
+      color: var(--text-muted);
+    }
+
+    .story-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      line-height: 1.25;
+      font-weight: 600;
+      margin-bottom: 1.75rem;
+      letter-spacing: -0.5px;
+    }
+
+    .story-content {
+      font-size: 1.125rem;
+      line-height: 1.85;
+      color: var(--text-main);
+    }
+
+    .story-content p {
+      margin-bottom: 1.5rem;
+      font-weight: 400;
+    }
+
+    .story-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .story-content p:first-of-type::first-letter {
+      font-family: var(--font-serif);
+      font-size: 3.8rem;
+      line-height: 0.85;
+      float: left;
+      padding-right: 0.75rem;
+      padding-top: 0.2rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .story-footer {
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .like-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.4rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+
+    .like-btn:hover {
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+
+    .like-btn.liked {
+      background: #fee2e2;
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Scroll Bar -->
+  <div id="progress-container">
+    <div id="progress-bar"></div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <a href="#" class="logo">Fables<span>.</span></a>
+    <button class="theme-toggle" id="theme-btn" aria-label="Toggle theme">🌙</button>
+  </header>
+
+  <!-- Hero -->
+  <main>
+    <section class="hero">
+      <h1>Tales to make you smile, and tales to make you feel.</h1>
+      <p>Hand-crafted short stories exploring humor and gentle human wonders.</p>
+    </section>
+
+    <!-- Category Filters -->
+    <div class="controls">
+      <button class="tab-btn active" data-filter="all">All Stories</button>
+      <button class="tab-btn" data-filter="funny">Humorous</button>
+      <button class="tab-btn" data-filter="beautiful">Reflective</button>
+    </div>
+
+    <!-- Stories Container -->
+    <div class="story-container">
+
+      <!-- Funny Story Card -->
+      <article class="story-card" data-category="funny">
+        <div class="story-meta">
+          <span class="tag funny">Humor</span>
+          <span class="reading-time">3 min read</span>
+        </div>
+        <h2 class="story-title">The Grand Escapade of Barnaby's Sourdough</h2>
+        <div class="story-content">
+          <p>
+            It was a crisp Sunday morning when Barnaby realized his artisanal sourdough starter, affectionately named "Dough-lilah," had developed an ego. He had tucked her inside the warmest spot in the house—the linen closet right above the boiler—with a light cheesecloth cover and an encouraging pep talk. 
+          </p>
+          <p>
+            By 2:00 PM, Dough-lilah had breached containment.
+          </p>
+          <p>
+            When Barnaby swung open the louvered door to grab a fresh tea towel, he was met not with neatly folded Egyptian cotton, but with a silent, beige avalanche. She had digested two washcloths, draped herself lovingly over a vintage floral quilt, and was creeping across the laminate floor with the glacial menace of a well-leavened swamp monster.
+          </p>
+          <p>
+            Armed with only a spatula and a stainless steel salad bowl, Barnaby attempted diplomacy. "Easy now," he murmured, backing slowly toward the stove. Dough-lilah offered only a soft, bubbling *blorp* in response. By evening, the entire first floor smelled richly of warm brioche, and the neighbor’s beagle was sitting on the porch window sill, staring at the kitchen with raw existential reverence. Barnaby baked sixteen unintended baguettes that night just to clear the hallway.
+          </p>
+        </div>
+        <div class="story-footer">
+          <span>By Arthur Finch</span>
+          <button class="like-btn" onclick="toggleLike(this)">
+            <span>♥</span> <span class="like-count">142</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- Beautiful Story Card -->
+      <article class="story-card" data-category="beautiful">
+        <div class="story-meta">
+          <span class="tag beautiful">Heartfelt</span>
+          <span class="reading-time">4 min read</span>
+        </div>
+        <h2 class="story-title">The Keeper of Forgotten Teacups</h2>
+        <div class="story-content">
+          <p>
+            Clara operated a repair shop on the corner of Rue des Violettes where she only accepted porcelain that carried grief. People brought her porcelain cups cracked down the ribbing, chipped saucers left behind by grandmothers, and milk jugs fractured by clumsy, hurried mornings.
+          </p>
+          <p>
+            She did not hide the fractures. Using an ancient resin laced with real gold powder, she practiced the art of *kintsugi*—mending what was broken by honoring its scars. Every line of gold told a quiet truth: that breakage was not the end of a vessel’s dignity, but the moment its true history began.
+          </p>
+          <p>
+            One rainy dusk, a young man brought her a plain white cup split clean down the center. He spoke little, merely resting his palm beside it. Clara asked no questions; she simply set to work. Under the yellow lamp of her workbench, her needle-tipped brushes laid rivers of gilt along the split edges, drawing them back into communion.
+          </p>
+          <p>
+            When the man returned a week later, he held the mended cup up to the autumn sunlight. The gold seams caught the afternoon warmth, radiant and unashamed. For the first time in many months, he exhaled a breath he seemed to have held since summer—reminded that life, even when shattered, can hold sweetness once again.
+          </p>
+        </div>
+        <div class="story-footer">
+          <span>By Elena Vane</span>
+          <button class="like-btn" onclick="toggleLike(this)">
+            <span>♥</span> <span class="like-count">389</span>
+          </button>
+        </div>
+      </article>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2026 Whispers & Chuckles. Designed for slow reading.</p>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    // 1. Reading Progress Bar
+    window.addEventListener('scroll', () => {
+      const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      document.getElementById('progress-bar').style.width = scrolled + '%';
+    });
+
+    // 2. Dark/Light Mode Toggle
+    const themeBtn = document.getElementById('theme-btn');
+    const root = document.documentElement;
+
+    themeBtn.addEventListener('click', () => {
+      const isDark = root.getAttribute('data-theme') === 'dark';
+      if (isDark) {
+        root.removeAttribute('data-theme');
+        themeBtn.textContent = '🌙';
+      } else {
+        root.setAttribute('data-theme', 'dark');
+        themeBtn.textContent = '☀️';
+      }
+    });
+
+    // 3. Category Filter Tabs
+    const filterButtons = document.querySelectorAll('.tab-btn');
+    const storyCards = document.querySelectorAll('.story-card');
+
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Handle Active Button State
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+
+        const filter = button.getAttribute('data-filter');
+
+        // Filter Story Cards with Smooth Fade
+        storyCards.forEach(card => {
+          const category = card.getAttribute('data-category');
+          if (filter === 'all' || category === filter) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+      });
+    });
+
+    // 4. Like Button Counter
+    function toggleLike(button) {
+      const countSpan = button.querySelector('.like-count');
+      let count = parseInt(countSpan.textContent, 10);
+      const isLiked = button.classList.toggle('liked');
+
+      if (isLiked) {
+        countSpan.textContent = count + 1;
+      } else {
+        countSpan.textContent = count - 1;
+      }
+    }
+  </script>
+</body>
+</html>
